@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Mohamed Akhmouch</string>
+    <string name="title">title</string>
+    <string name="button">Ajouter</string>
+    <string name="description">description</string>
+    <string name="textview">TextView</string>
+</resources>
