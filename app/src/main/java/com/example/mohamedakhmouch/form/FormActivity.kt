@@ -22,9 +22,7 @@ class FormActivity : AppCompatActivity() {
         binding.titleEditText.setText(task?.title)
         binding.descriptionEditText.setText(task?.description)
 
-
         binding.button.setOnClickListener {
-
             val title = binding.titleEditText.text.toString()
             val description = binding.descriptionEditText.text.toString()
             val newTask = Task(id = task?.id ?: UUID.randomUUID().toString(), title = title, description = description)

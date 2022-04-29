@@ -1,7 +1,6 @@
 package com.example.mohamedakhmouch.tasklist
 
 import TaskListAdapter
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,15 +10,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.example.mohamedakhmouch.databinding.FragmentTaskListBinding
 import com.example.mohamedakhmouch.form.FormActivity
 import com.example.mohamedakhmouch.network.Api
+import com.example.mohamedakhmouch.user.UserInfoActivity
 import kotlinx.coroutines.launch
 
 
 class TaskListFragment : Fragment() {
     private val viewModel: TasksListViewModel by viewModels()
-
 
     private val createTask = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = result.data?.getSerializableExtra("task") as Task?
@@ -40,7 +41,6 @@ class TaskListFragment : Fragment() {
     private val adapter = TaskListAdapter()
     private lateinit var binding: FragmentTaskListBinding
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,11 +54,18 @@ class TaskListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
         lifecycleScope.launch {
             val userInfo = Api.userWebService.getInfo().body()!!
-            val userInfoTextView = binding.textView
-            userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}"
+            binding.textView.text = "${userInfo.firstName} ${userInfo.lastName}"
+            binding.imageView.load(userInfo.avatar){
+                transformations(CircleCropTransformation())
+            }
         }
+        binding.imageView.load("https://goo.gl/gEgYUd"){
+            transformations(CircleCropTransformation())
+        }
+
         viewModel.refresh()// on demande de rafraîchir les données sans attendre le retour directement
     }
 
@@ -68,13 +75,19 @@ class TaskListFragment : Fragment() {
             createTask.launch(intent)
         }
 
+        binding.imageView.setOnClickListener {
+            val intent = Intent(context, UserInfoActivity::class.java)
+            startActivity(intent)
+        }
 
         adapter.onClickDelete = { task ->
             viewModel.delete(task)
         }
 
         adapter.onClickEdit = { task ->
-            viewModel.update(task)
+            val intent = Intent(context, FormActivity::class.java)
+            intent.putExtra("task", task)
+            editTask.launch(intent)
         }
 
         lifecycleScope.launch { // on lance une coroutine car `collect` est `suspend`
@@ -84,7 +97,6 @@ class TaskListFragment : Fragment() {
                 adapter.submitList(newList)
             }
         }
-
         binding.taskList.adapter = adapter
     }
 }

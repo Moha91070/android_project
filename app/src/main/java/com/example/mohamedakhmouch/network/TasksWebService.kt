@@ -1,4 +1,4 @@
-package com.example.mohamedakhmouch.tasklist
+package com.example.mohamedakhmouch.network
 
 import com.example.mohamedakhmouch.tasklist.Task
 import retrofit2.Response

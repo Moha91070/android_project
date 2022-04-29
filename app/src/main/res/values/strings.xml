@@ -4,4 +4,6 @@
     <string name="button">Ajouter</string>
     <string name="description">description</string>
     <string name="textview">TextView</string>
+    <string name="choisir_une_image">Choisir une Image</string>
+    <string name="prendre_une_photo">Prendre une photo</string>
 </resources>
